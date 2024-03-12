@@ -10,6 +10,16 @@ class Linie
         System.out.println("Constructor Linie()");
     }
 
+    String modifyString(String input) {
+        // Replace all special characters with escaped ones
+        String escapedInput = input.replaceAll("([\\\\\\[\\](){}+*?.^$|])", "\\\\$1");
+        
+        // Add '\b' before and after each word
+        String manipulatedString = escapedInput.replaceAll("\\b(\\w+)\\b", "\\\\b$1\\\\b");
+        
+        return manipulatedString;
+    }
+
     Linie(String text) 
     {
         this.text = text;
@@ -40,7 +50,9 @@ class Linie
 
     void cautare(String pattern) 
     {
-        Pattern p = Pattern.compile(pattern);
+        String regex = "(?<!\\S)" + modifyString(pattern) + "(?!\\S)";
+        System.out.println("regex = " + regex);
+        Pattern p = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         Matcher m = p.matcher(text);
         if (m.find()) {
             System.out.println("Sirul a fost gasit in linie : " + pattern);
@@ -50,7 +62,7 @@ class Linie
     }
 }
 
-class Pagina extends Linie {
+class Pagina extends Linie { 
     
     Pagina() {
         System.out.println("Constructor Pagina()");
@@ -74,7 +86,10 @@ class Pagina extends Linie {
 
     @Override
     void cautare(String pattern) {
-        Pattern p = Pattern.compile(pattern);
+
+        String regex = "(?<!\\S)" + modifyString(pattern) + "(?!\\S)";
+        System.out.println("regex = " + regex);
+        Pattern p = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         Matcher m = p.matcher(text);
         if (m.find()) {
             System.out.println("Sirul a fost gasit in pagina : " + pattern);
@@ -92,12 +107,11 @@ public class Main {
 
         pagina.setText("Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
         pagina.afisare("Textul este: ");
-        pagina.cautare("amet");
+        pagina.cautare("amet.");
 
-        Linie linie = new Linie("Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
+        Linie linie = new Linie("Lorem ipsum dolor sit amet.");
         linie.afisare();
-        linie.cautare("amet");
-
+        linie.cautare("amet.");
 
     }
 }
